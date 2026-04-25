@@ -1,6 +1,9 @@
-# dev-sec-bug
+# dev-sec-bug 📦🔐♾️
+## A repo for applying to the Agile SDLC method on A DevSecOps project
 
-A repository demonstrating a multi-branch development workflow with dedicated branches for development, security, and testing.
+### dev branch for developers 📦
+### sec branch for security engineers 🔐
+### bug branch or test branch for code testers or test engineers ♾️
 
 ## Branch Strategy
 
