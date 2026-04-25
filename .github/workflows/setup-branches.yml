@@ -1,0 +1,116 @@
+name: Setup dev, sec, and test branches
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  create-branches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create or update dev branch
+        run: |
+          if git ls-remote --exit-code --heads origin dev; then
+            echo "dev branch already exists – skipping creation."
+          else
+            git checkout -b dev
+            cat > DEV.md << 'EOF'
+# Dev Branch
+
+This branch contains active development work.
+
+## Purpose
+- New feature development
+- Bug fixes
+- Experimental changes
+
+## Workflow
+1. Branch off from `main`
+2. Implement changes
+3. Open a Pull Request back to `main`
+4. After review, merge into `main`
+EOF
+            git add DEV.md
+            git commit -m "Initialize dev branch"
+            git push origin dev
+            git checkout main
+            echo "dev branch created successfully."
+          fi
+
+      - name: Create or update sec branch
+        run: |
+          if git ls-remote --exit-code --heads origin sec; then
+            echo "sec branch already exists – skipping creation."
+          else
+            git checkout -b sec
+            cat > SEC.md << 'EOF'
+# Sec Branch
+
+This branch contains security-focused work.
+
+## Purpose
+- Security patches and vulnerability fixes
+- Dependency updates for security advisories
+- Security configuration changes
+- Code hardening
+
+## Workflow
+1. Branch off from `main`
+2. Apply security fix
+3. Run security scans (SAST, dependency audit)
+4. Open a Pull Request back to `main`
+5. After security review, merge into `main`
+EOF
+            git add SEC.md
+            git commit -m "Initialize sec branch"
+            git push origin sec
+            git checkout main
+            echo "sec branch created successfully."
+          fi
+
+      - name: Create or update test branch
+        run: |
+          if git ls-remote --exit-code --heads origin test; then
+            echo "test branch already exists – skipping creation."
+          else
+            git checkout -b test
+            cat > TEST.md << 'EOF'
+# Test Branch
+
+This branch contains test suites and QA-related work.
+
+## Purpose
+- Unit tests
+- Integration tests
+- End-to-end tests
+- Test configuration and tooling
+
+## Workflow
+1. Branch off from `main`
+2. Add or update tests
+3. Ensure all tests pass locally
+4. Open a Pull Request back to `main`
+5. After CI passes, merge into `main`
+EOF
+            git add TEST.md
+            git commit -m "Initialize test branch"
+            git push origin test
+            git checkout main
+            echo "test branch created successfully."
+          fi
